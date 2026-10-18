@@ -5,7 +5,7 @@
 #endif
 
 /**
- * Node struct for both problems
+ * Node struct both problems
  */
 struct Node
 {
@@ -31,17 +31,16 @@ struct Node
  * MUST RUN IN O(n) where n is the number of nodes in the input list
  * ==============================================================
  *
- * @pre: smaller and larger may containing garbage (do NOT have
- *       to be NULL)
+ * @pre: smaller and larger may containing garbage (NOT NULL)
  *
  * @param[inout] head
  *   Reference to the head pointer to the input list.
  *   Should be set to NULL upon return
  * @param[out] smaller
- *   Reference to a head pointer for the list of nodes with values
+ *   Reference to a head pointer the list of nodes with values
  *   less than or equal to the pivot
  * @param[out] larger
- *   Reference to a head pointer for the list of nodes with values
+ *   Reference to a head pointer the list of nodes with values
  *   greater than the pivot
  * @param[in] pivot
  *   Pivot value
@@ -51,9 +50,9 @@ void llpivot(Node *&head, Node *&smaller, Node *&larger, int pivot);
 
 /**
  * Given a linked list pointed to by head, removes (filters out) nodes
- * whose value does not meet the criteria given by the predicate
+ * whose value won't meet the criteria given by the predicate
  * function object, pred (i.e. pred should be a function object that implements
- * `bool operator()(int value)` and returns *true* for items that should
+ * `bool operator()(int value)` and returns *true* items that should
  * be *removed/filtered*.  Removed items should be deallocated.
  *
  * ==============================================================
