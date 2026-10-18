@@ -85,6 +85,19 @@ Node* llfilter(Node* head, Comp pred)
     //*********************************************
 
 
+    if (head == nullptr){
+      return nullptr;
+    }
+
+    if(pred(head->val)){ // then remove this node
+      Node* next = head->next; 
+      delete head;
+      return llfilter(next, pred);
+    } else{
+      head->next = llfilter(head->next, pred);
+      return head;
+    }
+
 }
 
 #endif
