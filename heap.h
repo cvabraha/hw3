@@ -69,6 +69,9 @@ private:
   PComparator c_;
 
   size_t bestChild(size_t idx) const;
+  size_t bestChildFrom(size_t k, size_t last, size_t best) const;
+  void trickleUp(size_t idx);
+  void trickleDown(size_t idx);
 };
 
 // Add implementation of member functions here
@@ -90,36 +93,62 @@ size_t Heap<T,PComparator>::size() const
   return data_.size();
 }
 
+// k is the next best child, best is the best child so far
+template <typename T, typename PComparator>
+size_t Heap<T,PComparator>::bestChildFrom(size_t k, size_t last, size_t best) const
+{
+  if(k >= last || k >= data_.size()) return best;
+  if(c_(data_[k], data_[best])) best = k;
+  return bestChildFrom(k + 1, last, best);
+}
+
+// best child finder
+
 template <typename T, typename PComparator>
 size_t Heap<T,PComparator>::bestChild(size_t idx) const
 {
   size_t first = m_ * idx + 1;
   if(first >= data_.size()) return data_.size();   // no children
-
-  size_t best = first;
-  for(size_t k = first + 1; k < first + m_ && k < data_.size(); k++){
-    if(c_(data_[k], data_[best])) best = k;
-  }
-  return best;
+  return bestChildFrom(first + 1, first + m_, first);
 }
+
+template <typename T, typename PComparator>
+void Heap<T,PComparator>::trickleUp(size_t idx)
+{
+  if(idx == 0) return;
+  size_t parent = (idx - 1) / m_;
+  if(c_(data_[idx], data_[parent])){
+    std::swap(data_[idx], data_[parent]);
+    trickleUp(parent);
+  }
+}
+
+template <typename T, typename PComparator>
+void Heap<T,PComparator>::trickleDown(size_t idx)
+{
+  size_t best = bestChild(idx);
+  if(best < data_.size() && c_(data_[best], data_[idx])){
+    std::swap(data_[best], data_[idx]);
+    trickleDown(best);
+  }
+}
+
+
+
+
 
 // push func
 template <typename T, typename PComparator>
 void Heap<T,PComparator>::push(const T& item)
 {
   data_.push_back(item);
-  size_t idx = data_.size() - 1;
-  while(idx > 0 && c_(data_[idx], data_[(idx - 1) / m_])){
-    size_t parent = (idx - 1) / m_;
-    std::swap(data_[idx], data_[parent]);
-    idx = parent;
-  }
+  trickleUp(data_.size()-1);
 }
 
 
 
 
-// We will start top() for you to handle the case of 
+// We will start top() you to handle the case of 
 // calling top on an empty heap
 template <typename T, typename PComparator>
 T const & Heap<T,PComparator>::top() const
@@ -140,7 +169,7 @@ T const & Heap<T,PComparator>::top() const
 }
 
 
-// We will start pop() for you to handle the case of 
+// We will start pop() you to handle the case of 
 // calling top on an empty heap
 template <typename T, typename PComparator>
 void Heap<T,PComparator>::pop()
@@ -156,13 +185,7 @@ void Heap<T,PComparator>::pop()
   data_[0] = data_.back();
   data_.pop_back();
 
-  size_t idx = 0;
-  size_t best = bestChild(idx);
-  while(best < data_.size() && c_(data_[best], data_[idx])){
-    std::swap(data_[best], data_[idx]);
-    idx = best;
-    best = bestChild(idx);
-  }
+  trickleDown(0);
 }
 
 
